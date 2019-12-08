@@ -1,0 +1,80 @@
+
+    html,body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-family:"Courier";
+        font-size:0.9em;
+        overflow-y: hidden;
+    }
+    ul#navi {
+        width: 100%;
+        text-indent: 10px;
+    }
+    ul#navi, ul#navi ul {
+        margin:0;
+        padding:0;
+        list-style:none;
+    }
+    li.group {
+        margin-bottom: 3px;
+    }
+    li.group div.title {
+        height: 35px;
+        line-height: 35px;
+        cursor:pointer;
+    }
+    ul.sub li {
+        margin-bottom: 2px;
+        height:35px;
+        line-height:35px;
+        cursor:pointer;
+    }
+    ul.sub li a {
+        display: block;
+        width: 100%;
+        height:100%;
+        text-decoration:none;
+        color:#000;
+    }
+    ul.sub li:hover {
+        background: #A4A4A4;
+    }
+    #contents {
+        height: 93%;
+        position: relative; 
+        top: 0; left: 0; right: 0; bottom: 0;    
+        overflow-y: scroll;    
+    }
+    table{
+        margin: auto;
+        border: 1px solid rgb(206, 206, 206);
+        border-collapse: collapse;
+        width: 98%;
+        height: 30%;
+    }
+    th{
+        height: 40px;
+        width: 100px;
+        background-color: rgb(235, 235, 235);
+    }
+    td{
+        padding: 15px;
+    }
+    div.thumbnail img{
+        width: 250px;
+        height: 300px;
+    }
+    .product_list{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: minmax(5px, auto);
+        grid-gap: 5px;
+    }
+    .topmenudiv a:visited{
+        text-decoration: none; color: #646464;
+    }
+    .topmenudiv a:hover{
+        text-decoration: underline; color: #000;
+    }

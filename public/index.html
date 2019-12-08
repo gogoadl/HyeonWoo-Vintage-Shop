@@ -1,0 +1,379 @@
+<!DOCTYPE html> 
+<html>
+    <title>HyeonWoo Vintage Shop </title>
+    <link rel="stylesheet" href="ShoppingMall.css" type="text/css">
+    <head>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+
+        var isLogin = false;
+        var user_nick = "";
+
+            function loginfunction(){
+                var mem_id = $('#member_id').val(); // member_id inputField의 값을 얻어온다.
+                var mem_pw = $('#member_passwd').val();
+                
+                $.post('/login', { id : mem_id, pw : mem_pw // login, id와 pw를 json 형태로 전송
+                }, function (data) {
+                    if(data == false) // 반환값이 없을 경우 아이디 또는 비밀번호가 틀림
+                    {
+                        alert("아이디 혹은 비밀번호가 잘못 되었습니다.");
+                    }
+                    else // 반환 값이 있을 경우 로그인 성공
+                    {
+                        alert("로그인 성공!");
+                        isLogin = true;
+                        user_nick = data[0].NICKNAME;
+                        $(".loginPageBtn").text(user_nick);
+
+                        $('.mainPage').show();
+                        $('.adminPage').hide();
+                        $('.loginPage').hide();
+                        $('.signupPage').hide();
+                            
+                    }
+                });
+            };
+
+            function signupfunction(){
+                var signup_mem_id = $('#signup_member_id').val(); // member_id inputField의 값을 얻어온다.
+                var signup_mem_pw = $('#signup_member_pw').val();
+                var signup_mem_name = $('#signup_member_name').val();
+                var signup_mem_phone = $('#signup_member_phone').val()
+                var signup_mem_phone1 = $('#signup_member_phone1').val()
+                var signup_mem_phone2 = $('#signup_member_phone2').val()
+
+                var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+                var pattern_num = /[0-9]/;
+                var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/;
+
+                if(!signup_mem_id)
+                {
+                    alert("아이디를 입력해 주세요");
+                }
+                else if(pattern_kor.test(signup_mem_id) || pattern_spc.test(signup_mem_id) || signup_mem_id.length < 6)
+                {
+                    alert("아이디는 6자 이상 영문소문자/숫자로 입력해주세요.");
+                }
+                else if(!signup_mem_pw)
+                {
+                    alert("비밀번호를 입력해 주세요");
+                }
+                else if(pattern_kor.test(signup_mem_pw) || pattern_spc.test(signup_mem_pw) || signup_mem_id.length < 6)
+                {
+                    alert("비밀번호는 6자 이상 영문소문자/숫자로 입력해주세요.");
+                }
+                else if(!signup_mem_name)
+                {
+                    alert("이름을 입력해 주세요");
+                }
+                else if(pattern_spc.test(signup_mem_name) || pattern_num.test(signup_mem_name))
+                {
+                    alert("올바른 이름을 입력해 주세요.");
+                }
+                else if(!signup_mem_phone1 || !signup_mem_phone2)
+                {
+                    alert("올바른 전화번호를 입력해 주세요");
+                }
+                else
+                {
+                    $.post('/signup', 
+                    { 
+                        id : signup_mem_id, 
+                        pw : signup_mem_pw,
+                        name : signup_mem_name,
+                        phone : signup_mem_phone + signup_mem_phone1 + signup_mem_phone2
+                    },
+                    function (data) {
+                        if(data == false) // 반환값이 없을 경우 아이디 또는 비밀번호가 틀림
+                        {
+                            alert("동일한 아이디가 이미 존재합니다.");
+                        }
+                        else // 반환 값이 있을 경우 로그인 성공
+                        {
+                            alert("회원가입에 성공 했습니다!");
+                            $('.mainPage').show();
+                            $('.adminPage').hide();
+                            $('.loginPage').hide();
+                            $('.signupPage').hide();
+                            
+                        }
+                    });
+                }
+                
+            };                          
+    </script>
+
+    <script type="text/javascript">
+        $(function() {
+            $("#product_img").on('change', function(){
+                readURL(this);
+                
+            });
+        });
+        function product_registration()
+            {
+                var product_name = $('#product_name').val();
+                var product_category = $('#product_category').val();
+                var product_price = $('#product_price').val();
+                var product_img = "image/";
+                product_img += $('#product_img').val().replace(/C:\\fakepath\\/i, ''); // fakePath제외하고 이미지 이름만 가져온다.
+                var product_info = $('#product_info').val();
+               
+                alert
+
+                console.log(product_img);
+                $.post('/products', 
+                { PRODUCT_NAME : product_name,
+                  PRODUCT_CATEGORY : product_category,
+                  PRODUCT_PRICE : product_price,
+                  PRODUCT_IMG : product_img,
+                  PRODUCT_INFO : product_info
+                }, function (data) {
+                    if(data == false) // 반환값이 없을 경우 아이디 또는 비밀번호가 틀림
+                    {
+                        alert("상품 등록에 실패했습니다.");
+                    }
+                    else // 반환 값이 있을 경우 상품 등록 성공
+                    {
+                        alert("상품을 등록했습니다!");  
+                    }
+                });
+            }
+        function readURL(input) // 이미지 미리보기 함수
+        {
+            if (input.files && input.files[0]) 
+            {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img_preview').attr('src', e.target.result);
+                    var file = new file(e.target.result,"image.jpg");
+                }
+
+              reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function() 
+            {
+                // 화면 전환 처리 부분
+                $('.mainPage').show();
+                $('.adminPage').hide();
+                $('.loginPage').hide();
+                $('.signupPage').hide();
+                
+                $('.pageBtn').click(function()
+                {
+                    $('.mainPage').hide();
+                    $('.adminPage').show();
+                    $('.loginPage').hide();
+                    $('.signupPage').hide();
+                })
+                $('.loginPageBtn').click(function()
+                {
+                    $('.mainPage').hide();
+                    $('.adminPage').hide();
+                    $('.loginPage').show();
+                    $('.signupPage').hide();
+                })
+                $('.signupPageBtn').click(function()
+                {
+                    $('.mainPage').hide();
+                    $('.adminPage').hide();
+                    $('.loginPage').hide();
+                    $('.signupPage').show();
+                })  
+
+                showData();  
+            });
+//          화면에 상품을 보여주는 코드
+            function showData()
+                {
+                    $('.product_list').empty();
+                    $.getJSON('/products', function (data) 
+                        {
+                        $(data).each(function (index, item) 
+                            {
+                                var output = '';
+                                output += "<li id=productNo_" + item.PRODUCT_NUMBER + ">"
+                                output += "<div class='thumbnail'> <a href="
+                                output += "products/" + item.PRODUCT_NUMBER + ">"
+                                output += "<img src=" + item.PRODUCT_IMG + ">"
+                                output += "</a></div>"
+                                output += "<div class='description'>"
+                                output += "<strong> " + item.PRODUCT_NAME + "</strong>"
+                                output += "<br>" + item.PRODUCT_PRICE + "원" 
+                                output += "</div>"
+                                output +=" </li>"
+                                //alert(output);
+                                $('.product_list').append(output);
+                            });   
+                        });
+            }
+
+        </script>
+
+    </head>
+    
+    <!---------------------------------------------------------------- 의류 메뉴 div ------------------------------------------------------>
+    <div style="height: 100%; width: 18%; padding-left: 30px; background-color: #D8D8D8; float: left; " ><a href="index.html"><img src="HWS_logo.png"  style="width: 90%; padding-top: 30px;"></a>
+        <br><br><br><br>
+            <ul id="navi"> <!-- UnOrdered List 순서가 없는 목록 요소 -->
+                <li class="group"> <!-- 내부에 들어갈 자식 요소 -->
+                    <div class="title">OUTER</div> <!-- 클래스 지정으로 스타일 시트 사용하기 -->
+                    <ul class="sub">
+                        <li><a href="#">JACKET</a></li>
+                        <li><a href="#">COAT</a></li>
+                        <li><a href="#">VEST</a></li>
+                    </ul>
+                </li>
+                <li class="group">
+                    <div class="title">TEE</div>
+                    <ul class="sub">
+                        <li><a href="#">SHIRT</a></li>                
+                    </ul>
+                </li>
+                <li class="group">
+                    <div class="title">ACC</div>
+                    <ul class="sub">
+                        <li><a href="#">CAP</a></li>
+                        <li><a href="#">ACCESSORY</a></li>
+                    </ul>
+                </li>        
+            </ul>
+    </div>
+    <!---------------------------------------------------------------- 상단 메뉴 div ------------------------------------------------------>
+    <div class="topmenudiv"style="height: 6%; border-style: outset; border-width: 1px;"> 
+        <br>
+            
+            <a  href="#none" class="loginPageBtn" style="margin-left:10px; margin-top: 10px; font-family:initial; text-decoration:none; font-weight: 900;"><strong>LOGIN</strong></a>
+            <a  href="#none" class="signupPageBtn" style="margin-left:10px; margin-top: 10px; font-family:initial; text-decoration:none; font-weight: 900;"><strong>JOIN</strong></a>
+            <a  href="#none" class="pageBtn" style="margin-left:10px; margin-top: 10px; font-family:initial; text-decoration:none; font-weight: 900;"><strong>CART</strong></a>
+        </div>
+        <!--------------------------------------------------------- 메인 페이지 div ------------------------------------------------------------>
+        <div id="contents" class="mainPage">
+            <div id="best_products" style=" height: 70px;">
+                <h2 style="font-family: sans-serif; text-align: center; padding-top: 20px;">BEST OF BEST</h2>
+            </div>
+            <ul class="product_list">
+                
+        </div>
+        
+        <!---------------------------------------------------------------- 관리자 데이터 삽입 div ------------------------------------------------------>
+        <div id="contents" class="adminPage" > 
+                <table border="1">
+                        <caption style="padding: 30px;"><h2 style="font-family: sans-serif;">상품 추가하기</h2></caption>
+                       
+                        <tbody>
+                        <tr>
+                        <th scope="row">상품명 </th>
+                                        <td>
+                                            <input type="text" id="product_name">
+                                        </td>
+                                    </tr>
+                        <tr>
+                        <th scope="row">카테고리</th>
+                                        <td> 
+                                        <select id="product_category">
+                                        <option value="">카테고리 선택</option>
+                                        <option value="JACKET">JACKET</option>
+                                        <option value="COAT">COAT</option>
+                                        <option value="VEST">VEST</option>
+                                        <option value="SHIRT">SHIRT</option>
+                                        <option value="CAP">CAP</option>
+                                        <option value="ACCESSORY">ACCESSORY</option>
+                                    </td>
+                                    </select>
+                                    </tr>
+                        <tr>
+                        <th scope="row">상품 가격 </th>
+                                        <td><input type="text" id="product_price"></td>
+                                    </tr>
+        
+                                    </tr>
+                        <tr class="displaynone">
+                        <th scope="row">상품 이미지 </th>
+                                        <td><input id="product_img" type="file" accept=".gif, .jpg, .png" />
+                                    </td>            
+                                    </tr>
+                        <th scope="row">상품 이미지<br>미리보기</th>
+                            <td><img id="img_preview" width="300px" height="370px">
+                                </td>            
+                                </tr>
+                        <tr >
+                            <th scope="row">상품 상세설명</th>
+                            <td><textarea id="product_info" style="width: 99%; height: 500px; resize: none;" ></textarea></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                        <div style=" padding: 20px; text-align: center;">
+                            <a href="#" onclick="product_registration()"><img src="btn_product_regist.gif">
+                            </a>
+                        </div>
+
+        </div>
+
+        <!---------------------------------------------------------------- 로그인 화면 div ------------------------------------------------------>
+        <div id="contents" class="loginPage" > 
+        <fieldset>
+            <legend>로그인</legend>
+                        <label class="id ePlaceholder" title="아이디">
+                            <input id="member_id" name="member_id" fw-filter="isFill" fw-label="아이디" fw-msg="" class="inputTypeText" placeholder="아이디" value="" type="text">
+                        </label>
+                        <label class="password ePlaceholder" title="비밀번호">
+                            <input id="member_passwd" name="member_passwd" fw-filter="isFill&amp;isMin[4]&amp;isMax[16]" fw-label="패스워드" fw-msg="" autocomplete="off" value="" type="password" placeholder="비밀번호">
+                        </label>
+              <a href="#" onclick="loginfunction()">
+                    <img src="btn_member_login.gif">        
+              </a>
+                    </fieldset>
+        </div>
+        <!---------------------------------------------------------------- 회원 가입 div ------------------------------------------------------>
+        <div id="contents" class="signupPage">
+              
+                        <table border="1">
+                <caption style="padding: 30px;"><h2 style="font-family: sans-serif;">회원가입</h2></caption>
+
+                <tbody>
+                <tr>
+                <th>아이디 </th>
+                    <td>
+                        <input id="signup_member_id" type="text" size="15"> 
+                    </td>
+                </tr>
+
+                <tr>
+                <th>비밀번호 </th>
+                    <td><input id="signup_member_pw" type="password" size="15"> </td>
+                </tr>
+                
+               
+                <tr>
+                    <th>이름 </th>
+                        <td>
+                            <input id="signup_member_name" type="text" size="15"> 
+                        </td>
+                </tr>
+
+                <tr>
+                <th>휴대전화 </th>
+                    <td ><select id="signup_member_phone">
+                        <option value="010">010</option>
+                        <option value="011">011</option>
+                        <option value="016">016</option>
+                        <option value="017">017</option>
+                        <option value="018">018</option>
+                        <option value="019">019</option>
+                    </select>
+                - <input id="signup_member_phone1" maxlength="4" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" type="text" size="4">
+                - <input id="signup_member_phone2" maxlength="4" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" type="text" size="4">
+                    </td>
+                </tr> 
+            </tbody>
+        </table>
+        <div style=" padding: 20px; text-align: center;"><a href="#" onclick="signupfunction()"><img src="btn_member_join1.gif"></a></div>
+        
+    </div>
+    
+</html>

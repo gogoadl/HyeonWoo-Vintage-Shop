@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DB Basic</title>
+    <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 데이터를 보여주는 함수
+            function selectData() {
+                // #output 내부의 내용물을 제거합니다.
+                $('#output').empty();
+                $.getJSON('/products', function (data) {
+            $(data).each(function (index, item) {
+                var output = '';
+                output += '<tr>';
+                output += '    <td>' + item.PRODUCT_NUMBER + '</td>';
+                output += '    <td>' + item.PRODUCT_NAME + '</td>';
+                output += '    <td>' + item.PRODUCT_IMG + '</td>';
+                output += '    <td>' + item.PRODUCT_PRICE + '</td>';
+                output += '    <td>' + item.PRODUCT_INFO + '</td>';
+                output += '</tr>';
+                $('#output').append(output);
+            });
+        });
+                // Ajax를 수행합니다.
+            }
+
+            // 데이터를 추가합니다.
+            $('#insert_form').submit(function (event) { // insert form내부의 submit이 클릭 될 경우 이벤트 수행
+                // Ajax를 수행합니다.
+                var data = $(this).serialize();
+                $.post('/products', data, selectData);
+                // 기본 이벤트를 제거합니다.
+                event.preventDefault();
+            });
+
+            // 초기 화면에 데이터를 표시합니다.
+            selectData();
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <form id="insert_form">
+        <fieldset>
+            <legend>데이터 추가</legend>
+            <table>
+                <tr>
+                    <td><label>상품명</label></td>
+                    <td><input type="text" name="PRODUCT_NAME" /></td>
+                </tr>
+                <tr>
+                    <td><label>상품이미지</label></td>
+                    <td><input type="text" name="PRODUCT_IMG" /></td>
+                </tr>
+                <tr>
+                    <td><label>상품가격</label></td>
+                    <td><input type="text" name="PRODUCT_PRICE" /></td>
+                </tr>
+                <tr>
+                    <td><label>상품설명</label></td>
+                    <td><input type="text" name="PRODUCT_INFO" /></td>
+                </tr>
+            </table>
+            <input type="submit"value="추가" />
+        </fieldset>
+        </form>
+    </div>
+    <table id="output" border="1">
+    </table>
+</body>
+</html>
