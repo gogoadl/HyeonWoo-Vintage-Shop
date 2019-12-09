@@ -72,9 +72,30 @@
         grid-auto-rows: minmax(5px, auto);
         grid-gap: 5px;
     }
+    .topmenudiv a{
+        margin-left:10px;
+        margin-top: 10px; 
+        font-family:initial; 
+        text-decoration:none; 
+        font-weight: 900;
+    }
     .topmenudiv a:visited{
         text-decoration: none; color: #646464;
     }
     .topmenudiv a:hover{
+        text-decoration: underline; color: #000;
+    }
+    .admin_menu a{
+        font-family: sans-serif; 
+        padding: 30px; 
+        font-size: 25px; 
+        font-weight: 900;
+        text-decoration: none;
+    }
+    .admin_menu a:visited{
+        text-decoration: none; color: #646464;
+        
+    }
+    .admin_menu a:hover{
         text-decoration: underline; color: #000;
     }

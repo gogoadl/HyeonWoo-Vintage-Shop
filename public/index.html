@@ -120,7 +120,7 @@
                 product_img += $('#product_img').val().replace(/C:\\fakepath\\/i, ''); // fakePath제외하고 이미지 이름만 가져온다.
                 var product_info = $('#product_info').val();
                
-                alert
+                
 
                 console.log(product_img);
                 $.post('/products', 
@@ -247,9 +247,9 @@
     <div class="topmenudiv"style="height: 6%; border-style: outset; border-width: 1px;"> 
         <br>
             
-            <a  href="#none" class="loginPageBtn" style="margin-left:10px; margin-top: 10px; font-family:initial; text-decoration:none; font-weight: 900;"><strong>LOGIN</strong></a>
-            <a  href="#none" class="signupPageBtn" style="margin-left:10px; margin-top: 10px; font-family:initial; text-decoration:none; font-weight: 900;"><strong>JOIN</strong></a>
-            <a  href="#none" class="pageBtn" style="margin-left:10px; margin-top: 10px; font-family:initial; text-decoration:none; font-weight: 900;"><strong>CART</strong></a>
+            <a  href="#none" class="loginPageBtn" ><strong>LOGIN</strong></a>
+            <a  href="#none" class="signupPageBtn" ><strong>JOIN</strong></a>
+            <a  href="#none" class="pageBtn" ><strong>CART</strong></a>
         </div>
         <!--------------------------------------------------------- 메인 페이지 div ------------------------------------------------------------>
         <div id="contents" class="mainPage">
@@ -262,9 +262,14 @@
         
         <!---------------------------------------------------------------- 관리자 데이터 삽입 div ------------------------------------------------------>
         <div id="contents" class="adminPage" > 
+            <div class="admin_menu" style="text-align: center; padding: 30px;">
+                <a href="" >상품 추가하기</a>
+                <a href="" >상품 삭제하기</a>
+                <a href="" >상품 수정하기</a>
+            </div>
+                <div class="add_product">
                 <table border="1">
-                        <caption style="padding: 30px;"><h2 style="font-family: sans-serif;">상품 추가하기</h2></caption>
-                       
+
                         <tbody>
                         <tr>
                         <th scope="row">상품명 </th>
@@ -306,10 +311,12 @@
                             <td><textarea id="product_info" style="width: 99%; height: 500px; resize: none;" ></textarea></td>
                             </tr>
                         </tbody>
+                       
                         </table>
                         <div style=" padding: 20px; text-align: center;">
                             <a href="#" onclick="product_registration()"><img src="btn_product_regist.gif">
                             </a>
+                        </div>
                         </div>
 
         </div>
