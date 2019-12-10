@@ -5,9 +5,10 @@
     <head>
         <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.js"></script>
         <script type="text/javascript">
-
+        
         var isLogin = false;
         var user_nick = "";
+        sessionStorage.clear();
 
             function loginfunction(){
                 var mem_id = $('#member_id').val(); // member_id inputField의 값을 얻어온다.
@@ -24,6 +25,14 @@
                         alert("로그인 성공!");
                         isLogin = true;
                         user_nick = data[0].NICKNAME;
+                        // const user = 
+                        // {
+                        //     user_id : data[0].ID,
+                        //     user_pw : data[0].PASSWORD
+                        // };
+                        // sessionStorage.setItem('user',JSON.stringify(user));
+                        // var id = sessionStorage.getItem('user');
+                        //console.log(id);
                         $(".loginPageBtn").text(user_nick);
 
                         $('.mainPage').show();
@@ -363,8 +372,8 @@
                                         <option value="SHIRT">SHIRT</option>
                                         <option value="CAP">CAP</option>
                                         <option value="ACCESSORY">ACCESSORY</option>
-                                    </td>
                                     </select>
+                                    </td>
                                     </tr>
                         <tr>
                         <th scope="row">상품 가격 </th>

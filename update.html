@@ -3,29 +3,44 @@
 <html>    <head>  <title>Edit Page</title>   </head>
 <body>
   <h1>Edit Page</h1>    <hr>
-  <form method="post">
+  <form method="POST">
     <fieldset>
       <legend>Edit Data</legend>
       <table>
         <tr>  <td><label>상품번호</label></td>
-                <td><input type="text" name="id" value="<%= data.PRODUCT_NUMBER %>" disabled /></td>
+                <td><input type="text" name="PRODUCT_NUMBER" value="<%= data.PRODUCT_NUMBER %>" disabled /></td>
         </tr>
         <tr>  <td><label>상품명</label></td>
-                <td><input type="text" name="name" value="<%= data.PRODUCT_NAME %>" /></td>
+                <td><input type="text" name="PRODUCT_NAME" value="<%= data.PRODUCT_NAME %>" /></td>
+        </tr>
+        <tr>  <td><label>상품 가격</label></td>
+          <td><input type="text" name="PRODUCT_PRICE" value="<%= data.PRODUCT_PRICE %>" /></td>
         </tr>
         <tr>  <td><label>상품 이미지</label></td>
-          <td><img style="width: 200px; height: 200px;" name="image" src="/<%= data.PRODUCT_IMG %>" />
+          <td><img style="width: 200px; height: 200px;" name="PRODUCT_IMG" src="/<%= data.PRODUCT_IMG %>" />
             </td>
         </tr>
       
         <tr>  <td><label>상품 카테고리</label></td>
-                <td><input type="text" name="modelnumber" value="<%= data.PRODUCT_CATEGORY %>" /></td>
+                
+                <td> 
+                  <select id="PRODUCT_CATEGORY" >
+                  <option value="">카테고리 선택</option>
+                  <option value="JACKET">JACKET</option>
+                  <option value="COAT">COAT</option>
+                  <option value="VEST">VEST</option>
+                  <option value="SHIRT">SHIRT</option>
+                  <option value="CAP">CAP</option>
+                  <option value="ACCESSORY">ACCESSORY</option>
+              </select>
+              </td>
         </tr>
         <tr>  <td><label>상품 설명</label></td>
-                <td><input type="text" name="series" value="<%= data.PRODUCT_INFO %>" /></td>
+                <td><input type="text" name="PRODUCT_INFO" value="<%= data.PRODUCT_INFO %>" /></td>
         </tr>
       </table>
-      <input type="submit" />
+      <input type="submit" value="수정하기" /> 
+      <a href="../index.html"><input type="button" value="뒤로가기" /></a>
     </fieldset>
   </form>
 </body>

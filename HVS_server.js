@@ -143,41 +143,41 @@ app.get('/update/:id', function (request, response) {
           
         }));
         console.log(result);
-        console.log(data);
       });
-     
-      console.log(data);
-    });
-    
-       
+    }); 
   });
 
-// app.put('/update/:id', function (request, response) {
-//     // 변수를 선언합니다.
-//     var id = Number(request.body.id);
-//     var NAME = request.body.PRODUCT_NAME;
-//     var IMG = request.body.PRODUCT_IMG;
-//     var PRICE = request.body.PRODUCT_PRICE;
-//     var INFO = request.body.PRODUCT_INFO;
-//     var query = 'UPDATE hvs_products SET ';
-//     // 쿼리를 생성합니다./
-//     if (NAME) query += 'product_name="' + name + '" ';
-//     if (IMG) query += 'product_img="' + IMG + '" ';
-//     if (PRICE) query += 'product_price="' + modelnumber + '" ';
-//     if (INFO) query += 'product_info="' + series + '" ';
-//     query += 'WHERE id=' + id;
-//     // 데이터베이스 요청을 수행합니다.
-//     client.query(query, function (error, data) {
-//         response.send(data);
-//     });
-// });
-
-app.delete('/delete/:id', function (request, response) {
+app.post('/update/:id', function (request, response) {
     // 변수를 선언합니다.
-    var id = Number(request.params.id);
+    var NUMBER = Number(request.params.id);
+    var NAME = request.body.PRODUCT_NAME;
+    var IMG = request.body.PRODUCT_IMG;
+    var PRICE = request.body.PRODUCT_PRICE;
+    var INFO = request.body.PRODUCT_INFO;
+    var CATEGORY = request.body.PRODUCT_CATEGORY;
 
+
+    var query = 'UPDATE hvs_products SET ';
+    // 쿼리를 생성합니다./
+    if (NAME) 
+        query += 'product_name="' + NAME + '", ';
+    //if (IMG) query += 'product_img="' + IMG + '" ';
+    if (PRICE) query += 'product_price="' + PRICE + '", ';
+    if (INFO) query += 'product_info="' + INFO + '", ';
+    if (CATEGORY) query += 'product_category="' + CATEGORY + '" ';
+    query += 'WHERE PRODUCT_NUMBER=' + NUMBER;
     // 데이터베이스 요청을 수행합니다.
-    client.query('DELETE FROM hvs_products WHERE id=', [id], function (error, data) {
-        response.send(data);
+    client.query(query, function (error, data) {
+        response.send("<h2>상품정보가 수정 되었습니다!</h2><a href='../index.html'>메인페이지로 이동</a> ");
+        if(error)
+            console.log(error);
     });
+});
+
+app.get('/delete/:id', function (request, response) {
+   
+    client.query('DELETE FROM hvs_products WHERE PRODUCT_NUMBER=?', [request.params.id], function () {
+        console.log(request.params.id + "번째 상품이 삭제되었습니다.");
+        response.redirect('/');
+   });
 });
