@@ -163,12 +163,37 @@
                 $('.loginPage').hide();
                 $('.signupPage').hide();
                 
-                $('.pageBtn').click(function()
+                $('.adminPageBtn').click(function()
                 {
                     $('.mainPage').hide();
                     $('.adminPage').show();
                     $('.loginPage').hide();
                     $('.signupPage').hide();
+                    $('.orderlist').show();
+                    $('.add_product').hide();
+                    $('.delete_update_product').hide();
+                    $('.orderlist_btn').click(function()
+                    {
+                        $('.orderlist').show();
+                        $('.add_product').hide();
+                        $('.delete_update_product').hide();
+                        
+                    })
+                    $('.add_btn').click(function()
+                    {
+                        $('.orderlist').hide();
+                        $('.add_product').show();
+                        $('.delete_update_product').hide();
+                        
+                    })
+                    $('.delete_update_btn').click(function()
+                    {
+                        $('.orderlist').hide();
+                        $('.add_product').hide();
+                        $('.delete_update_product').show();
+                        delete_update_show();
+                    })
+                   
                 })
                 $('.loginPageBtn').click(function()
                 {
@@ -212,6 +237,33 @@
                         });
             }
 
+            function delete_update_show()
+                {
+                    $('.delete_update_product_list').empty();
+                    $.getJSON('/products', function (data) 
+                        {
+                        $(data).each(function (index, item) 
+                            {
+                                var output = '';
+                                output += "<tr> <td scope='row'>" + item.PRODUCT_NUMBER + "</td>";
+                                output += "<td scope='row'>" + item.PRODUCT_NAME + "</td> ";
+                                output += "<td scope='row'>" + item.PRODUCT_CATEGORY + "</td> ";
+                                output += "<td scope='row'>" + item.PRODUCT_PRICE + "</td> ";
+                                output += "<td scope='row'><img src=" + item.PRODUCT_IMG + "></td> ";
+                                output += "<td scope='row'>" + item.PRODUCT_INFO + "</td> ";
+                                output += "<td scope='row'>";
+                                deletetext = "/delete/" + item.PRODUCT_NUMBER;
+                                output += "<a href=" + deletetext + "> 삭제하기 </a><br><br>";
+                                updatetext = "/update/" + item.PRODUCT_NUMBER;
+                                output += "<a href=" + updatetext + "> 수정하기 </a></td></tr>";
+                                
+                                //output += "<td scope='row'><input type='button' value='수정' onClick='location.href'=products/>"
+                                //output += "<input type='button' value='삭제'></td></tr>" 
+                                //alert(output);
+                                $('.delete_update_product_list').append(output);
+                            });   
+                        });
+            }
         </script>
 
     </head>
@@ -249,7 +301,8 @@
             
             <a  href="#none" class="loginPageBtn" ><strong>LOGIN</strong></a>
             <a  href="#none" class="signupPageBtn" ><strong>JOIN</strong></a>
-            <a  href="#none" class="pageBtn" ><strong>CART</strong></a>
+            <a  href="#none" class="" ><strong>CART</strong></a>
+            <a  href="#none" class="adminPageBtn" ><strong>ADMIN</strong></a>
         </div>
         <!--------------------------------------------------------- 메인 페이지 div ------------------------------------------------------------>
         <div id="contents" class="mainPage">
@@ -263,9 +316,31 @@
         <!---------------------------------------------------------------- 관리자 데이터 삽입 div ------------------------------------------------------>
         <div id="contents" class="adminPage" > 
             <div class="admin_menu" style="text-align: center; padding: 30px;">
-                <a href="" >상품 추가하기</a>
-                <a href="" >상품 삭제하기</a>
-                <a href="" >상품 수정하기</a>
+                <a href="#" class="orderlist_btn" >주문현황</a>
+                <a href="#" class="add_btn" >상품 추가하기</a>
+                <a href="#" class="delete_update_btn">상품 삭제,수정 하기</a>
+            </div>
+            <div class="orderlist">
+
+            </div>
+            <div class="delete_update_product">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                    <th scope="cols">상품번호</th>
+                                    <th scope="cols">상품이름</th>
+                                    <th scope="cols">상품카테고리</th>
+                                    <th scope="cols">상품가격</th>
+                                    <th scope="cols">상품이미지</th>
+                                    <th scope="cols">상품설명</th>  
+                                    <th scope="cols">수정, 삭제</th>  
+                            </tr>
+                            
+                        </thead>
+                        <tbody class="delete_update_product_list">
+
+                        </tbody>
+                    </table>
             </div>
                 <div class="add_product">
                 <table border="1">

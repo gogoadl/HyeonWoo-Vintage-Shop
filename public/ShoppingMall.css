@@ -99,3 +99,7 @@
     .admin_menu a:hover{
         text-decoration: underline; color: #000;
     }
+    .delete_update_product_list img{
+        width: 100;
+        height: 100px;
+    }

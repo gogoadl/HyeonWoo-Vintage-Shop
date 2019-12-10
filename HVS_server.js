@@ -1,7 +1,8 @@
 var express = require('express'); // 경량 http 웹 프레임워크 요청과 응답, 미들웨어 사용, 템플릿 엔진을 제공한다
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
-
+var fs = require('fs');
+var ejs = require('ejs');
 // var hostname = '203.232.193.175';
 // var portname = '52273';
 
@@ -10,6 +11,7 @@ var client = mysql.createConnection({
     user: 'root',
     password: '1234',
     database: 'HVS_db'
+    
 });
 
 var app = express();
@@ -129,27 +131,48 @@ app.post('/products', function (request, response) {
     });
 });
 
-app.put('/products/:id', function (request, response) {
-    // 변수를 선언합니다.
-    var id = Number(request.body.id);
-    var NAME = request.body.PRODUCT_NAME;
-    var IMG = request.body.PRODUCT_IMG;
-    var PRICE = request.body.PRODUCT_PRICE;
-    var INFO = request.body.PRODUCT_INFO;
-    var query = 'UPDATE hvs_products SET ';
-    // 쿼리를 생성합니다.
-    if (NAME) query += 'product_name="' + name + '" ';
-    if (IMG) query += 'product_img="' + IMG + '" ';
-    if (PRICE) query += 'product_price="' + modelnumber + '" ';
-    if (INFO) query += 'product_info="' + series + '" ';
-    query += 'WHERE id=' + id;
-    // 데이터베이스 요청을 수행합니다.
-    client.query(query, function (error, data) {
-        response.send(data);
+app.get('/update/:id', function (request, response) {
+    fs.readFile('update.html', 'utf8', function (error, data) {
+        var id = Number(request.params.id);
+        
+      client.query('SELECT * FROM hvs_products WHERE PRODUCT_NUMBER = ?', [
+          id
+      ], function (error, result) {
+        response.send(ejs.render(data, {
+          data: result[0]
+          
+        }));
+        console.log(result);
+        console.log(data);
+      });
+     
+      console.log(data);
     });
-});
+    
+       
+  });
 
-app.delete('/products/:id', function (request, response) {
+// app.put('/update/:id', function (request, response) {
+//     // 변수를 선언합니다.
+//     var id = Number(request.body.id);
+//     var NAME = request.body.PRODUCT_NAME;
+//     var IMG = request.body.PRODUCT_IMG;
+//     var PRICE = request.body.PRODUCT_PRICE;
+//     var INFO = request.body.PRODUCT_INFO;
+//     var query = 'UPDATE hvs_products SET ';
+//     // 쿼리를 생성합니다./
+//     if (NAME) query += 'product_name="' + name + '" ';
+//     if (IMG) query += 'product_img="' + IMG + '" ';
+//     if (PRICE) query += 'product_price="' + modelnumber + '" ';
+//     if (INFO) query += 'product_info="' + series + '" ';
+//     query += 'WHERE id=' + id;
+//     // 데이터베이스 요청을 수행합니다.
+//     client.query(query, function (error, data) {
+//         response.send(data);
+//     });
+// });
+
+app.delete('/delete/:id', function (request, response) {
     // 변수를 선언합니다.
     var id = Number(request.params.id);
 
