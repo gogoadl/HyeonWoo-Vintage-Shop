@@ -171,6 +171,7 @@
                 $('.adminPage').hide();
                 $('.loginPage').hide();
                 $('.signupPage').hide();
+                $('.cartListPage').hide();
                 
                 $('.adminPageBtn').click(function()
                 {
@@ -178,6 +179,7 @@
                     $('.adminPage').show();
                     $('.loginPage').hide();
                     $('.signupPage').hide();
+                    $('.cartListPage').hide();
                     $('.orderlist').show();
                     $('.add_product').hide();
                     $('.delete_update_product').hide();
@@ -210,6 +212,16 @@
                     $('.adminPage').hide();
                     $('.loginPage').show();
                     $('.signupPage').hide();
+                    $('.cartListPage').hide();
+                })
+                $('.cartPageBtn').click(function()
+                {
+                    $('.mainPage').hide();
+                    $('.adminPage').hide();
+                    $('.loginPage').hide();
+                    $('.signupPage').hide();
+                    $('.cartListPage').show();
+                    cart_show();
                 })
                 $('.signupPageBtn').click(function()
                 {
@@ -217,6 +229,7 @@
                     $('.adminPage').hide();
                     $('.loginPage').hide();
                     $('.signupPage').show();
+                    $('.cartListPage').hide();
                 })  
 
                 showData();  
@@ -233,10 +246,12 @@
                                 output += "<li id=productNo_" + item.PRODUCT_NUMBER + ">"
                                 output += "<div class='thumbnail'> <a href="
                                 output += "products/" + item.PRODUCT_NUMBER + ">"
-                                output += "<img src=" + item.PRODUCT_IMG + ">"
-                                output += "</a></div>"
+                                output += "<img src=" + item.PRODUCT_IMG + "></a><br>"
+                                output += "<img src='image/cart.jpg' style='width:30px; height: 30px;'>"
+                                output += "</div>"
                                 output += "<div class='description'>"
                                 output += "<strong> " + item.PRODUCT_NAME + "</strong>"
+                
                                 output += "<br>" + item.PRODUCT_PRICE + "원" 
                                 output += "</div>"
                                 output +=" </li>"
@@ -270,6 +285,31 @@
                                 //output += "<input type='button' value='삭제'></td></tr>" 
                                 //alert(output);
                                 $('.delete_update_product_list').append(output);
+                            });   
+                        });
+            }
+
+            function cart_show()
+                {
+                    $('.cart_list').empty();
+                    $.getJSON('/products', function (data) 
+                        {
+                        $(data).each(function (index, item) 
+                            {
+                                var output = '';
+                                output += "<tr> <td scope='row'>" + item.PRODUCT_NUMBER + "</td>";
+                                output += "<td scope='row'>" + item.PRODUCT_NAME + "</td> ";
+                                output += "<td scope='row'>" + item.PRODUCT_CATEGORY + "</td> ";
+                                output += "<td scope='row'>" + item.PRODUCT_PRICE + "</td> ";
+                                output += "<td scope='row'><img src=" + item.PRODUCT_IMG + "></td> ";
+                                output += "<td scope='row'>" + item.PRODUCT_INFO + "</td> ";
+                                output += "<td scope='row'><input type='number' min='0' max='99' ></td>";
+                                
+                                
+                                //output += "<td scope='row'><input type='button' value='수정' onClick='location.href'=products/>"
+                                //output += "<input type='button' value='삭제'></td></tr>" 
+                                //alert(output);
+                                $('.cart_list').append(output);
                             });   
                         });
             }
@@ -310,7 +350,7 @@
             
             <a  href="#none" class="loginPageBtn" ><strong>LOGIN</strong></a>
             <a  href="#none" class="signupPageBtn" ><strong>JOIN</strong></a>
-            <a  href="#none" class="" ><strong>CART</strong></a>
+            <a  href="#none" class="cartPageBtn" ><strong>CART</strong></a>
             <a  href="#none" class="adminPageBtn" ><strong>ADMIN</strong></a>
         </div>
         <!--------------------------------------------------------- 메인 페이지 div ------------------------------------------------------------>
@@ -319,9 +359,28 @@
                 <h2 style="font-family: sans-serif; text-align: center; padding-top: 20px;">BEST OF BEST</h2>
             </div>
             <ul class="product_list">
-                
+            </ul>
         </div>
-        
+        <!--------------------------------------------------------- 장바구니 페이지 ------------------------------------------------------------>
+        <div id="contents" class="cartListPage" style="padding: 10px;">
+            <table border="1">
+                <thead>
+                    <tr>
+                            <th scope="cols">상품 번호</th>
+                            <th scope="cols">상품 이름</th>
+                            <th scope="cols">상품 카테고리</th>
+                            <th scope="cols">상품 가격</th>
+                            <th scope="cols">상품 이미지</th>
+                            <th scope="cols">상품 설명</th>  
+                            <th scope="cols">상품 수량</th>  
+                    </tr>
+                    
+                </thead>
+                <tbody class="cart_list">
+
+                </tbody>
+            </table>
+    </div>
         <!---------------------------------------------------------------- 관리자 데이터 삽입 div ------------------------------------------------------>
         <div id="contents" class="adminPage" > 
             <div class="admin_menu" style="text-align: center; padding: 30px;">
@@ -358,7 +417,7 @@
                         <tr>
                         <th scope="row">상품명 </th>
                                         <td>
-                                            <input type="text" id="product_name">
+                                            <input type="text" id="product_name" s>
                                         </td>
                                     </tr>
                         <tr>

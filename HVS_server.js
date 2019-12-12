@@ -159,12 +159,12 @@ app.post('/update/:id', function (request, response) {
 
     var query = 'UPDATE hvs_products SET ';
     // 쿼리를 생성합니다./
-    if (NAME) 
-        query += 'product_name="' + NAME + '", ';
+    
+    query += 'product_name="' + NAME + '", ';
     //if (IMG) query += 'product_img="' + IMG + '" ';
-    if (PRICE) query += 'product_price="' + PRICE + '", ';
-    if (INFO) query += 'product_info="' + INFO + '", ';
-    if (CATEGORY) query += 'product_category="' + CATEGORY + '" ';
+    query += 'product_price="' + PRICE + '", ';
+    query += 'product_info="' + INFO + '", ';
+    query += 'product_category="' + CATEGORY + '" ';
     query += 'WHERE PRODUCT_NUMBER=' + NUMBER;
     // 데이터베이스 요청을 수행합니다.
     client.query(query, function (error, data) {
