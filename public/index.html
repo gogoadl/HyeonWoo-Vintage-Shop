@@ -10,7 +10,7 @@
         
             function loginfunction(){
                 var mem_id = $('#member_id').val(); // member_id inputField의 값을 얻어온다.
-                var mem_pw = $('#member_passwd').val();
+                var mem_pw = $('#member_password').val();
                 
                 $.post('/login', { id : mem_id, pw : mem_pw // login, id와 pw를 json 형태로 전송
                 }, function (data) {
@@ -154,6 +154,7 @@
                     }
                 });
             }
+            
         function readURL(input) // 이미지 미리보기 함수
         {
             if (input.files && input.files[0]) 
@@ -259,33 +260,7 @@
                 showData();  
             });
 //          화면에 상품을 보여주는 코드
-            function showData()
-                {
-                    $('.product_list').empty();
-                    
-                    $.getJSON('/products', function (data) 
-                        {
-                        $(data).each(function (index, item) 
-                            {
-                                
-                                var output = '';
-                                output += "<li id=productNo_" + item.PRODUCT_NUMBER + ">"
-                                output += "<div class='thumbnail'> <a href="
-                                output += "products/" + item.PRODUCT_NUMBER + ">"
-                                output += "<img src=" + item.PRODUCT_IMG + "></a><br>"
-                                output += "<a href='#' onclick='addtoCart();'><img src='image/cart.jpg' style='width:30px; height: 30px;'></a>"
-                                output += "</div>"
-                                output += "<div class='description'>"
-                                output += "<strong> " + item.PRODUCT_NAME + "</strong>"
-                
-                                output += "<br>" + item.PRODUCT_PRICE + "원" 
-                                output += "</div>"
-                                output +=" </li>"
-                                //alert(output);
-                                $('.product_list').append(output);
-                            });   
-                        });
-            }
+            
 
             function delete_update_show()
                 {
@@ -314,7 +289,7 @@
             function cart_show()
                 {
                     $('.cart_list').empty();
-                    $.getJSON('/products', function (data) 
+                    $.getJSON('/addtocart', function (data) 
                         {
                         $(data).each(function (index, item) 
                             {
@@ -325,31 +300,69 @@
                                 output += "<td scope='row'>" + item.PRODUCT_PRICE + "</td> ";
                                 output += "<td scope='row'><img src=" + item.PRODUCT_IMG + "></td> ";
                                 output += "<td scope='row'>" + item.PRODUCT_INFO + "</td> ";
-                                output += "<td scope='row'><input type='number' min='0' max='99' ></td>";
+                                output += "<td scope='row'><input type='number' min='0' max='99' value='1' ></td>";
                                 $('.cart_list').append(output);
                             });   
                         });
             }
-            function addtoCart(number)
-            {
+            
+            function showData()
+                {
+                    $('.product_list').empty();
+                    
+                    $.getJSON('/products', function (data) 
+                        {
+                        $(data).each(function (index, item) 
+                            {
+                                
+                                var output = '';
+                                var number = item.PRODUCT_NUMBER;
+                                
+                                output += "<li id=productNo_" + item.PRODUCT_NUMBER + ">"
+                                output += "<div class='thumbnail'> <a href="
+                                output += "addtocart/" + item.PRODUCT_NUMBER + ">"
+                                output += "<img src=" + item.PRODUCT_IMG + "></a><br>"
+                                output += "<a href='#' id=cartimage_" + item.PRODUCT_NUMBER + "><img src='image/cart.jpg' style='width:30px; height: 30px;'></a>"
+                                output += "</div>"
+                                output += "<div class='description'>"
+                                output += "<strong class=''> " + item.PRODUCT_NAME + "</strong>"
                 
-                if (confirm('장바구니에 상품을 추가하시겠습니까?')) {
-                    if(sessionStorage.getItem("userid"))
-                    {
-                        var number = $(this).parent().prop();
-                        alert(number);
-                        alert("상품추가 완료");
+                                output += "<br>" + item.PRODUCT_PRICE + "원" 
+                                output += "</div>"
+                                output +=" </li>"
+                                //alert(output);
+                                $('.product_list').append(output);
+                                $('#cartimage_' + item.PRODUCT_NUMBER).click(function(){
+                                    if (confirm('장바구니에 상품을 추가하시겠습니까?')) {
+                                                if(sessionStorage.getItem("userid"))
+                                                {
+                                                    var cart_product= {
+                                                        order_id : sessionStorage.getItem('userid'),
+                                                        product_number : item.PRODUCT_NUMBER,
+                                                        product_name : item.PRODUCT_NAME,
+                                                        product_price : item.PRODUCT_price,
+                                                        product_count : '1'
+                                                    };
+                                                    sessionStorage.setItem("cart_product", JSON.stringify(cart_product));
+                                                    console.log(JSON.parse(sessionStorage.getItem('cart_product')));
+                                                    alert(JSON.parse(sessionStorage.getItem('cart_product')));
+                                                    alert("상품추가 완료");
 
-                    }
-                    else
-                    {
-                        alert("로그인 후에 이용 가능합니다.");
-                    }
-            } else {
-                
-                // no click
-}
+                                                }
+                                                else
+                                                {
+                                                    alert("로그인 후에 이용 가능합니다.");
+                                                }
+                                        } else {
+                                            
+                                            // no click
+                                    }
+                                })
+                            });   
+                        });
             }
+            
+            
         </script>
 
     </head>
@@ -401,7 +414,7 @@
         <!--------------------------------------------------------- 장바구니 페이지 ------------------------------------------------------------>
         <div id="contents" class="cartListPage" style="padding: 10px;">
             <table border="1">
-                <thead>
+                <thead><h2 style="text-align: center;">장바구니</h2>
                     <tr>
                             <th scope="cols">상품 번호</th>
                             <th scope="cols">상품 이름</th>
@@ -503,18 +516,21 @@
 
         <!---------------------------------------------------------------- 로그인 화면 div ------------------------------------------------------>
         <div id="contents" class="loginPage" > 
-        <fieldset>
-            <legend>로그인</legend>
-                        <label class="id ePlaceholder" title="아이디">
-                            <input id="member_id" name="member_id" fw-filter="isFill" fw-label="아이디" fw-msg="" class="inputTypeText" placeholder="아이디" value="" type="text">
-                        </label>
-                        <label class="password ePlaceholder" title="비밀번호">
-                            <input id="member_passwd" name="member_passwd" fw-filter="isFill&amp;isMin[4]&amp;isMax[16]" fw-label="패스워드" fw-msg="" autocomplete="off" value="" type="password" placeholder="비밀번호">
-                        </label>
-              <a href="#" onclick="loginfunction()">
-                    <img src="btn_member_login.gif">        
-              </a>
-                    </fieldset>
+        <table border="1">
+            <caption style="padding: 30px;"><h2>로그인</h2></caption>
+            <tbody>
+                <tr>
+                    <th>아이디</th>
+                    <td> <input id="member_id" type="text" size="15"></td>
+                </tr>
+                <tr>
+                    <th>비밀번호</th>
+                    <td> <input id="member_password" type="password" size="15"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style=" padding: 20px; text-align: center;"><a href="#" onclick="loginfunction()"><img src="btn_member_login.gif"></a></div>
+        
         </div>
         <!---------------------------------------------------------------- 회원 가입 div ------------------------------------------------------>
         <div id="contents" class="signupPage">

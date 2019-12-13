@@ -56,6 +56,10 @@ app.post('/login', function (request, response) {
     });
   });
 
+  app.post('/addtocart'), function (request, response)
+  {
+
+  }
   app.post('/signup', function (request, response) {
     // 데이터베이스 요청을 수행합니다.
 
@@ -63,7 +67,7 @@ app.post('/login', function (request, response) {
     pw = request.body.pw;
     name = request.body.name;
     phone = request.body.phone;
-
+    
     console.log("사용자 아이디 : " + request.body.id);
     console.log("사용자 비밀번호 : " + request.body.pw);
     console.log("사용자 이름 : " + request.body.name);
@@ -131,6 +135,31 @@ app.post('/products', function (request, response) {
     });
 });
 
+app.post('/addtocart', function (request, response) {
+    // 변수를 선언합니다.
+    var NAME = request.body.PRODUCT_NAME;
+    var CATEGORY = request.body.PRODUCT_CATEGORY;
+    var IMG =  request.body.PRODUCT_IMG;
+    var PRICE = request.body.PRODUCT_PRICE;
+    var INFO = request.body.PRODUCT_INFO;
+
+    // 데이터베이스 요청을 수행합니다.
+    client.query('INSERT INTO hvs_products(PRODUCT_NAME,PRODUCT_IMG,PRODUCT_PRICE,PRODUCT_INFO,PRODUCT_CATEGORY) VALUES(?,?,?,?,?)', 
+       [NAME, IMG, PRICE, INFO, CATEGORY], function (error, data) {
+           if(error)
+           {
+               response.send(error);
+               console.log("상품 등록에 실패 했습니다.");
+           }
+           else
+           {
+            response.send(data);
+            console.log("DB에 데이터 삽입 성공");
+           }
+           
+    });
+});
+
 app.get('/update/:id', function (request, response) {
     fs.readFile('update.html', 'utf8', function (error, data) {
         var id = Number(request.params.id);
@@ -159,12 +188,12 @@ app.post('/update/:id', function (request, response) {
 
     var query = 'UPDATE hvs_products SET ';
     // 쿼리를 생성합니다./
-    
-    query += 'product_name="' + NAME + '", ';
+    if (NAME) 
+        query += 'product_name="' + NAME + '", ';
     //if (IMG) query += 'product_img="' + IMG + '" ';
-    query += 'product_price="' + PRICE + '", ';
-    query += 'product_info="' + INFO + '", ';
-    query += 'product_category="' + CATEGORY + '" ';
+    if (PRICE) query += 'product_price="' + PRICE + '", ';
+    if (INFO) query += 'product_info="' + INFO + '", ';
+    if (CATEGORY) query += 'product_category="' + CATEGORY + '" ';
     query += 'WHERE PRODUCT_NUMBER=' + NUMBER;
     // 데이터베이스 요청을 수행합니다.
     client.query(query, function (error, data) {
