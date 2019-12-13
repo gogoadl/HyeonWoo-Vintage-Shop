@@ -5,11 +5,9 @@
     <head>
         <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.js"></script>
         <script type="text/javascript">
+            
+            var isLogin;
         
-        var isLogin = false;
-        var user_nick = "";
-        sessionStorage.clear();
-
             function loginfunction(){
                 var mem_id = $('#member_id').val(); // member_id inputField의 값을 얻어온다.
                 var mem_pw = $('#member_passwd').val();
@@ -24,7 +22,13 @@
                     {
                         alert("로그인 성공!");
                         isLogin = true;
-                        user_nick = data[0].NICKNAME;
+                        
+                        sessionStorage.clear();
+                        sessionStorage.setItem('userid',data[0].ID);
+                        sessionStorage.setItem('userpw',data[0].PASSWORD);
+                        sessionStorage.setItem('username',data[0].NAME);
+                        
+                        
                         // const user = 
                         // {
                         //     user_id : data[0].ID,
@@ -33,7 +37,7 @@
                         // sessionStorage.setItem('user',JSON.stringify(user));
                         // var id = sessionStorage.getItem('user');
                         //console.log(id);
-                        $(".loginPageBtn").text(user_nick);
+                        
 
                         $('.mainPage').show();
                         $('.adminPage').hide();
@@ -41,6 +45,7 @@
                         $('.signupPage').hide();
                             
                     }
+                    location.reload();
                 });
             };
 
@@ -163,9 +168,28 @@
               reader.readAsDataURL(input.files[0]);
             }
         }
-
+        function sessionOver()
+        {
+            sessionStorage.clear();
+            location.reload();
+            isLogin = false;
+        }
         $(document).ready(function() 
             {
+                if(sessionStorage.getItem('userid') != null)
+                {
+                    $('#loginPageBtn').replaceWith("<a href='#' onclick='sessionOver();'><strong>LOGOUT</strong></a>");
+                    
+                }
+                else
+                {
+                    $('#loginPageBtn').text("LOGIN");
+                }
+                if(sessionStorage.getItem('username') == "관리자")
+                {
+                    $('#adminPageBtn').text("ADMIN");
+                }
+                
                 // 화면 전환 처리 부분
                 $('.mainPage').show();
                 $('.adminPage').hide();
@@ -238,16 +262,18 @@
             function showData()
                 {
                     $('.product_list').empty();
+                    
                     $.getJSON('/products', function (data) 
                         {
                         $(data).each(function (index, item) 
                             {
+                                
                                 var output = '';
                                 output += "<li id=productNo_" + item.PRODUCT_NUMBER + ">"
                                 output += "<div class='thumbnail'> <a href="
                                 output += "products/" + item.PRODUCT_NUMBER + ">"
                                 output += "<img src=" + item.PRODUCT_IMG + "></a><br>"
-                                output += "<img src='image/cart.jpg' style='width:30px; height: 30px;'>"
+                                output += "<a href='#' onclick='addtoCart();'><img src='image/cart.jpg' style='width:30px; height: 30px;'></a>"
                                 output += "</div>"
                                 output += "<div class='description'>"
                                 output += "<strong> " + item.PRODUCT_NAME + "</strong>"
@@ -280,10 +306,6 @@
                                 output += "<a href=" + deletetext + "> 삭제하기 </a><br><br>";
                                 updatetext = "/update/" + item.PRODUCT_NUMBER;
                                 output += "<a href=" + updatetext + "> 수정하기 </a></td></tr>";
-                                
-                                //output += "<td scope='row'><input type='button' value='수정' onClick='location.href'=products/>"
-                                //output += "<input type='button' value='삭제'></td></tr>" 
-                                //alert(output);
                                 $('.delete_update_product_list').append(output);
                             });   
                         });
@@ -304,14 +326,29 @@
                                 output += "<td scope='row'><img src=" + item.PRODUCT_IMG + "></td> ";
                                 output += "<td scope='row'>" + item.PRODUCT_INFO + "</td> ";
                                 output += "<td scope='row'><input type='number' min='0' max='99' ></td>";
-                                
-                                
-                                //output += "<td scope='row'><input type='button' value='수정' onClick='location.href'=products/>"
-                                //output += "<input type='button' value='삭제'></td></tr>" 
-                                //alert(output);
                                 $('.cart_list').append(output);
                             });   
                         });
+            }
+            function addtoCart(number)
+            {
+                
+                if (confirm('장바구니에 상품을 추가하시겠습니까?')) {
+                    if(sessionStorage.getItem("userid"))
+                    {
+                        var number = $(this).parent().prop();
+                        alert(number);
+                        alert("상품추가 완료");
+
+                    }
+                    else
+                    {
+                        alert("로그인 후에 이용 가능합니다.");
+                    }
+            } else {
+                
+                // no click
+}
             }
         </script>
 
@@ -348,10 +385,10 @@
     <div class="topmenudiv"style="height: 6%; border-style: outset; border-width: 1px;"> 
         <br>
             
-            <a  href="#none" class="loginPageBtn" ><strong>LOGIN</strong></a>
+            <a  href="#none" class="loginPageBtn" id="loginPageBtn"><strong >LOGIN</strong></a>
             <a  href="#none" class="signupPageBtn" ><strong>JOIN</strong></a>
             <a  href="#none" class="cartPageBtn" ><strong>CART</strong></a>
-            <a  href="#none" class="adminPageBtn" ><strong>ADMIN</strong></a>
+            <a  href="#none" class="adminPageBtn" id="adminPageBtn" ><strong></strong></a>
         </div>
         <!--------------------------------------------------------- 메인 페이지 div ------------------------------------------------------------>
         <div id="contents" class="mainPage">
