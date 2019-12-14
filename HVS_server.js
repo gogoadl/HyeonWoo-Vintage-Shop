@@ -3,8 +3,6 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var fs = require('fs');
 var ejs = require('ejs');
-// var hostname = '203.232.193.175';
-// var portname = '52273';
 
 // 데이터베이스 연결
 var client = mysql.createConnection({
@@ -22,9 +20,6 @@ app.listen(52273, function () { // 로컬말고
     console.log('Server Running at http://127.0.0.1:52273');
 });
 
-// app.listen(portname, hostname, function () { // 로컬말고 
-//     console.log('Server Running at http://'+hostname+':'+portname);
-// });
 
 //------------------------- 사용자 DB 접근 -------------------------- 
 
@@ -37,8 +32,6 @@ app.post('/login', function (request, response) {
     console.log("사용자 아이디 : " + request.body.id);
     console.log("사용자 비밀번호 : " + request.body.pw);
 
-    //var _query = "select * from hvs_member where ID='?' and PASSWORD='?'",[id,pw];
-    
     client.query('SELECT * FROM HVS_MEMBER WHERE ID=? and PASSWORD=?;',[id,pw]
         , function (error, data) {
             if(error)
@@ -56,10 +49,6 @@ app.post('/login', function (request, response) {
     });
   });
 
-  app.post('/addtocart'), function (request, response)
-  {
-
-  }
   app.post('/signup', function (request, response) {
     // 데이터베이스 요청을 수행합니다.
 
@@ -135,17 +124,43 @@ app.post('/products', function (request, response) {
     });
 });
 
+app.get('/addtocart/:id', function (request, response) {
+    // 변수를 선언합니다.
+    var id = request.params.id;
+    console.log(id);
+    // 데이터베이스 요청을 수행합니다.
+    client.query('SELECT * FROM hvs_cart WHERE order_id=?', [
+        id
+    ], function (error, data) {
+        response.send(data);
+    })
+});
+
+app.get('/order/:id', function (request, response) {
+    // 변수를 선언합니다.
+    var id = request.params.id;
+    console.log(id);
+    // 데이터베이스 요청을 수행합니다.
+    client.query('SELECT * FROM hvs_order WHERE order_id=?', [
+        id
+    ], function (error, data) {
+        response.send(data);
+    })
+});
+
 app.post('/addtocart', function (request, response) {
     // 변수를 선언합니다.
-    var NAME = request.body.PRODUCT_NAME;
-    var CATEGORY = request.body.PRODUCT_CATEGORY;
-    var IMG =  request.body.PRODUCT_IMG;
+    
+    var ID = request.body.ORDER_ID;
+    var NUMBER = request.body.PRODUCT_NUMBER;
+    var NAME =  request.body.PRODUCT_NAME;
     var PRICE = request.body.PRODUCT_PRICE;
-    var INFO = request.body.PRODUCT_INFO;
+    var COUNT = request.body.PRODUCT_COUNT;
+    var IMG = request.body.PRODUCT_IMG;
 
     // 데이터베이스 요청을 수행합니다.
-    client.query('INSERT INTO hvs_products(PRODUCT_NAME,PRODUCT_IMG,PRODUCT_PRICE,PRODUCT_INFO,PRODUCT_CATEGORY) VALUES(?,?,?,?,?)', 
-       [NAME, IMG, PRICE, INFO, CATEGORY], function (error, data) {
+    client.query('INSERT INTO hvs_cart(ORDER_ID,PRODUCT_NUMBER,PRODUCT_NAME,PRODUCT_PRICE,PRODUCT_COUNT,PRODUCT_IMG) VALUES(?,?,?,?,?,?)', 
+       [ID, NUMBER, NAME, PRICE, COUNT,IMG], function (error, data) {
            if(error)
            {
                response.send(error);
@@ -154,7 +169,7 @@ app.post('/addtocart', function (request, response) {
            else
            {
             response.send(data);
-            console.log("DB에 데이터 삽입 성공");
+            console.log("장바구니에 아이템 추가" + data);
            }
            
     });
@@ -188,12 +203,12 @@ app.post('/update/:id', function (request, response) {
 
     var query = 'UPDATE hvs_products SET ';
     // 쿼리를 생성합니다./
-    if (NAME) 
-        query += 'product_name="' + NAME + '", ';
+     
+    query += 'product_name="' + NAME + '", ';
     //if (IMG) query += 'product_img="' + IMG + '" ';
-    if (PRICE) query += 'product_price="' + PRICE + '", ';
-    if (INFO) query += 'product_info="' + INFO + '", ';
-    if (CATEGORY) query += 'product_category="' + CATEGORY + '" ';
+    query += 'product_price="' + PRICE + '", ';
+    query += 'product_info="' + INFO + '", ';
+    query += 'product_category="' + CATEGORY + '" ';
     query += 'WHERE PRODUCT_NUMBER=' + NUMBER;
     // 데이터베이스 요청을 수행합니다.
     client.query(query, function (error, data) {

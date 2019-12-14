@@ -1,6 +1,7 @@
 
 <!DOCTYPE html>
 <html>    <head>  <title>Edit Page</title>   </head>
+
 <body>
   <h1>Edit Page</h1>    <hr>
   <form method="POST">
@@ -24,8 +25,7 @@
         <tr>  <td><label>상품 카테고리</label></td>
                 
                 <td> 
-                  <select id="PRODUCT_CATEGORY" >
-                  <option value="">카테고리 선택</option>
+                  <select name="PRODUCT_CATEGORY">
                   <option value="JACKET">JACKET</option>
                   <option value="COAT">COAT</option>
                   <option value="VEST">VEST</option>
@@ -39,7 +39,7 @@
                 <td><input type="text" name="PRODUCT_INFO" value="<%= data.PRODUCT_INFO %>" /></td>
         </tr>
       </table>
-      <input type="submit" value="수정하기" /> 
+      <input id='submit' type="submit" value="수정하기" /> 
       <a href="../index.html"><input type="button" value="뒤로가기" /></a>
     </fieldset>
   </form>

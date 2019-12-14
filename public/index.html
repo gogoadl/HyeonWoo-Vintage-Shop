@@ -198,6 +198,7 @@
                 $('.signupPage').hide();
                 $('.cartListPage').hide();
                 
+                
                 $('.adminPageBtn').click(function()
                 {
                     $('.mainPage').hide();
@@ -241,12 +242,20 @@
                 })
                 $('.cartPageBtn').click(function()
                 {
-                    $('.mainPage').hide();
-                    $('.adminPage').hide();
-                    $('.loginPage').hide();
-                    $('.signupPage').hide();
-                    $('.cartListPage').show();
-                    cart_show();
+                    if(sessionStorage.getItem('userid'))
+                    {
+                        $('.mainPage').hide();
+                        $('.adminPage').hide();
+                        $('.loginPage').hide();
+                        $('.signupPage').hide();
+                        $('.cartListPage').show();
+                        cart_show();
+                    }
+                    else
+                    {
+                        alert("로그인 후에 이용가능 합니다.");
+                    }
+                    
                 })
                 $('.signupPageBtn').click(function()
                 {
@@ -289,21 +298,35 @@
             function cart_show()
                 {
                     $('.cart_list').empty();
-                    $.getJSON('/addtocart', function (data) 
+                    console.log("cartshow 실행");
+                    cartshowurl = '/addtocart/' + sessionStorage.getItem('userid');
+                    var totalprice = 0;
+                    $.getJSON(cartshowurl, function (data) 
                         {
                         $(data).each(function (index, item) 
                             {
+                                console.log(cartshowurl);
                                 var output = '';
-                                output += "<tr> <td scope='row'>" + item.PRODUCT_NUMBER + "</td>";
-                                output += "<td scope='row'>" + item.PRODUCT_NAME + "</td> ";
-                                output += "<td scope='row'>" + item.PRODUCT_CATEGORY + "</td> ";
-                                output += "<td scope='row'>" + item.PRODUCT_PRICE + "</td> ";
-                                output += "<td scope='row'><img src=" + item.PRODUCT_IMG + "></td> ";
-                                output += "<td scope='row'>" + item.PRODUCT_INFO + "</td> ";
-                                output += "<td scope='row'><input type='number' min='0' max='99' value='1' ></td>";
+
+                                output += "<tr> <td scope='row'>" + item.order_number + "</td>";
+                                output += "<td scope='row'>" + item.product_number + "</td> ";
+                                output += "<td scope='row'>" + item.product_name + "</td> ";
+                                output += "<td scope='row'><img src=" + item.product_img + "></td> ";
+                                output += "<td scope='row'>" + item.product_price + "</td> ";
+                                output += "<td scope='row'><input id='productcount' type='number' min='0' max='99' value=" + item.product_count + " ></td>";
+                                totalprice += item.product_price * item.product_count;
+                                    
                                 $('.cart_list').append(output);
-                            });   
+
+                            var totalpricetext = "상품 총 가격 :" + totalprice + " 원";
+                            $('#totalprice').append(totalpricetext);
                         });
+                        $('#orderbtn').click(function()
+                                    {
+                                        alert("상품을 주문했습니다");
+                                    });
+                            });  
+                        
             }
             
             function showData()
@@ -336,18 +359,28 @@
                                     if (confirm('장바구니에 상품을 추가하시겠습니까?')) {
                                                 if(sessionStorage.getItem("userid"))
                                                 {
-                                                    var cart_product= {
-                                                        order_id : sessionStorage.getItem('userid'),
-                                                        product_number : item.PRODUCT_NUMBER,
-                                                        product_name : item.PRODUCT_NAME,
-                                                        product_price : item.PRODUCT_price,
-                                                        product_count : '1'
-                                                    };
-                                                    sessionStorage.setItem("cart_product", JSON.stringify(cart_product));
-                                                    console.log(JSON.parse(sessionStorage.getItem('cart_product')));
-                                                    alert(JSON.parse(sessionStorage.getItem('cart_product')));
-                                                    alert("상품추가 완료");
+                                                    
+                                                    $.post('/addtocart', 
+                                                        { 
+                                                        ORDER_ID : sessionStorage.getItem('userid'),
+                                                        PRODUCT_NUMBER : item.PRODUCT_NUMBER,
+                                                        PRODUCT_NAME : item.PRODUCT_NAME,
+                                                        PRODUCT_PRICE : item.PRODUCT_PRICE,
+                                                        PRODUCT_COUNT : '1',
+                                                        PRODUCT_IMG : item.PRODUCT_IMG
+                                                        }, function (data) {
+                                                            if(data == false) // 반환값이 없을 경우 아이디 또는 비밀번호가 틀림
+                                                            {
+                                                                console.log("db에 addtocart 실패");
+                                                            }
+                                                            else // 반환 값이 있을 경우 상품 등록 성공
+                                                            {
+                                                                console.log("db에 addtocart 성공");
+                                                            }
+                                                        });
 
+                                                    alert("상품을 추가 했습니다.!");
+                                                    
                                                 }
                                                 else
                                                 {
@@ -416,12 +449,11 @@
             <table border="1">
                 <thead><h2 style="text-align: center;">장바구니</h2>
                     <tr>
+                            <th scope="cols">주문 번호</th>
                             <th scope="cols">상품 번호</th>
                             <th scope="cols">상품 이름</th>
-                            <th scope="cols">상품 카테고리</th>
-                            <th scope="cols">상품 가격</th>
                             <th scope="cols">상품 이미지</th>
-                            <th scope="cols">상품 설명</th>  
+                            <th scope="cols">상품 가격</th>  
                             <th scope="cols">상품 수량</th>  
                     </tr>
                     
@@ -430,6 +462,11 @@
 
                 </tbody>
             </table>
+            <div style="text-align: right; padding: 30px;">
+                <h3 id="totalprice"></h3>
+                <a  href="#"><img id="orderbtn" src="btn_order.gif"></a>
+                
+            </div>
     </div>
         <!---------------------------------------------------------------- 관리자 데이터 삽입 div ------------------------------------------------------>
         <div id="contents" class="adminPage" > 
