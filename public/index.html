@@ -317,16 +317,16 @@
                                 totalprice += item.product_price * item.product_count;
                                     
                                 $('.cart_list').append(output);
-
+                            });  
+                            
                             var totalpricetext = "상품 총 가격 :" + totalprice + " 원";
                             $('#totalprice').append(totalpricetext);
                         });
                         $('#orderbtn').click(function()
-                                    {
-                                        alert("상품을 주문했습니다");
-                                    });
-                            });  
+                    {
                         
+                        alert("상품을 주문했습니다");
+                    });
             }
             
             function showData()

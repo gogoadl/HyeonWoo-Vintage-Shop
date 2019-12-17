@@ -18,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.listen(52273, function () { // 로컬말고 
     console.log('Server Running at http://127.0.0.1:52273');
+    
 });
 
 
@@ -136,7 +137,7 @@ app.get('/addtocart/:id', function (request, response) {
     })
 });
 
-app.get('/order/:id', function (request, response) {
+app.post('/order/:id', function (request, response) {
     // 변수를 선언합니다.
     var id = request.params.id;
     console.log(id);
